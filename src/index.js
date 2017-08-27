@@ -6,6 +6,7 @@
  Функция должна принимать один аргумент и возвращать его
  */
 function returnFirstArgument(arg) {
+    return arg;
 }
 
 /*
@@ -15,6 +16,9 @@ function returnFirstArgument(arg) {
  Значение по умолчанию второго аргумента должно быть 100
  */
 function defaultParameterValue(a, b) {
+    b = b || 100;
+
+    return a + b;
 }
 
 /*
@@ -24,6 +28,7 @@ function defaultParameterValue(a, b) {
  Количество переданных аргументов заранее неизвестно
  */
 function returnArgumentsArray() {
+    return Array.prototype.slice.call(arguments);
 }
 
 /*
@@ -32,6 +37,7 @@ function returnArgumentsArray() {
  Функция должна принимать другую функцию и возвращать результат вызова переданной функции
  */
 function returnFnResult(fn) {
+    return fn();
 }
 
 /*
@@ -41,6 +47,11 @@ function returnFnResult(fn) {
  При вызове F, переданное число должно быть увеличено на единицу и возвращено из F
  */
 function returnCounter(number) {
+    number = number || 0;
+
+    return function() {
+        return ++number;
+    }
 }
 
 /*
@@ -50,6 +61,11 @@ function returnCounter(number) {
  Функция должна привязать переданные аргументы к функции F и вернуть получившуюся функцию
  */
 function bindFunction(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    return function() {
+        return fn.apply(null, args);
+    }
 }
 
 export {
