@@ -132,8 +132,7 @@ function calculator(number = 0) {
         sum: sum,
         dif: dif,
         div: div,
-
-        mul: mul,
+        mul: mul
     }
 }
 
