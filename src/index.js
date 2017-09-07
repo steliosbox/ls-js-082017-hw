@@ -223,6 +223,25 @@ function collectDOMStat(root) {
  * }
  */
 function observeChildNodes(where, fn) {
+    var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            function callFn(event, method) {
+                fn({
+                    type: method,
+                    nodes: Array.prototype.slice.call(mutation[event])
+                });               
+            }
+
+            if (mutation.addedNodes.length > 0) {
+                callFn('addedNodes', 'insert')
+            } else if (mutation.removedNodes.length > 0) {
+                callFn('removedNodes', 'remove')
+            }
+        });
+    });
+    var config = { childList: true, subtree: true };
+
+    observer.observe(where, config);
 }
 
 export {
