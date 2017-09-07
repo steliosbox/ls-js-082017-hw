@@ -53,13 +53,15 @@ function prepend(what, where) {
  * т.к. следующим соседом этих элементов является элемент с тегом P
  */
 function findAllPSiblings(where) {
-    var children = where.children;
-    var arr = [];
-    var length = children.length;
-// ***************************
+    var childrens = where.children,
+        length = childrens.length,
+        arr = [];
+
     for (var i = 0; i < length; i++) {
-        if ( children[i].nextElementSibling.tagName === 'P' ) {
-            arr.push(children[i].tagName);
+        var nextSibling = childrens[i].nextElementSibling;
+
+        if ( (nextSibling !== null) && (nextSibling.tagName === 'P') ) {
+            arr.push(childrens[i]);
         }      
     }
 
@@ -98,6 +100,11 @@ function findError(where) {
  * должно быть преобразовано в <div></div><p></p>
  */
 function deleteTextNodes(where) {
+    for (var i = 0; i < where.childNodes.length; i++) {
+        if (where.childNodes[i].nodeType !== Node.ELEMENT_NODE) {
+            where.removeChild(where.childNodes[i]);
+        }
+    }
 }
 
 /**
@@ -111,6 +118,15 @@ function deleteTextNodes(where) {
  * должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
+    if (where !== null) {
+        for (var i = 0; i < where.childNodes.length; i++) {
+            if (where.childNodes[i].nodeType !== Node.ELEMENT_NODE) {
+                where.removeChild(where.childNodes[i]);
+            }
+        }
+        deleteTextNodesRecursive(where.firstChild);
+        deleteTextNodesRecursive(where.nextElementSibling);
+    }
 }
 
 /**
@@ -136,6 +152,43 @@ function deleteTextNodesRecursive(where) {
  * }
  */
 function collectDOMStat(root) {
+    var obj = {
+        tags: {},
+        classes: {},
+        texts: 0
+    };
+
+    (function recursion(root) {
+        var item = root.childNodes;
+        var length = item.length;
+    
+        for (var i = 0; i < length; i++) {
+            if ( item[i].nodeType === Node.TEXT_NODE ) {
+                obj.texts = obj.texts + 1;        
+            } else {
+                obj.tags[item[i].tagName] = obj.tags[item[i].tagName] || 0;
+                obj.tags[item[i].tagName] = obj.tags[item[i].tagName] + 1;
+                if (item[i].classList.length > 0) {
+                    var classes = item[i].classList;
+
+                    for (var j = 0; j < classes.length; j++) {
+                        obj.classes[classes[j]] = obj.classes[classes[j]] || 0;
+                        obj.classes[classes[j]] = obj.classes[classes[j]] + 1;
+                    }                 
+                }           
+            }
+        }
+
+        if (root.nextSibling !== null ) {
+            recursion(root.nextSibling);
+        }
+
+        if (root.firstChild !== null) {
+            recursion(root.firstChild);
+        }      
+    })(root);
+     
+    return obj;   
 }
 
 /**
