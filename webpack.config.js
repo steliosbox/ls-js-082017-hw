@@ -16,10 +16,10 @@ loaders.push({
 module.exports = {
     entry: {
         main: './src/index.js',
-        dnd: './src/dnd.js'
+        townss: './src/towns.js'
     },
     output: {
-        filename: '[name].js',
+        filename: '[hash].js',
         path: path.resolve('dist')
     },
     devtool: 'source-map',
@@ -41,9 +41,9 @@ module.exports = {
         }),
         new HtmlPlugin({
             title: 'Div Drag And Drop',
-            template: 'dnd.hbs',
-            filename: 'dnd.html',
-            chunks: ['dnd']
+            template: 'towns.hbs',
+            filename: 'towns.html',
+            chunks: ['towns']
         }),
         new CleanWebpackPlugin(['dist'])
     ]
