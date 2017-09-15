@@ -36,6 +36,29 @@ let homeworkContainer = document.querySelector('#homework-container');
  * @return {Promise<Array<{name: string}>>}
  */
 function loadTowns() {
+    return new Promise(function(resolve) {
+        var url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json',
+            xhr = new XMLHttpRequest();
+
+        xhr.open('GET', url);
+        xhr.responseType = 'json';
+        xhr.send();
+        xhr.addEventListener('load', function() {
+            var result = xhr.response;
+            
+            result.sort(function(a, b) {
+                if (a.name == b.name) {
+                    return 0;                    
+                } else if (a.name > b.name) {
+                    return 1;
+                }
+                
+                return -1;
+            });
+            
+            resolve(result);
+        });
+    });   
 }
 
 /**
@@ -52,6 +75,9 @@ function loadTowns() {
  * @return {boolean}
  */
 function isMatching(full, chunk) {
+    var reg = new RegExp(chunk, 'gi');
+
+    return reg.test(full); 
 }
 
 let loadingBlock = homeworkContainer.querySelector('#loading-block');
@@ -60,7 +86,29 @@ let filterInput = homeworkContainer.querySelector('#filter-input');
 let filterResult = homeworkContainer.querySelector('#filter-result');
 let townsPromise;
 
+loadTowns().then(function(promise) {
+    if (promise.length > 0) {
+        townsPromise = promise;
+        loadingBlock.style.display = 'none';
+        filterBlock.style.display = 'block';
+    }
+});
+
 filterInput.addEventListener('keyup', function() {
+    var value = filterInput.value;
+    var result = '';
+
+    if (value !== '') {
+        for (var i = 0; i < townsPromise.length; i++) {
+            var town = townsPromise[i].name;
+
+            if (isMatching(town, value)) {
+                result += town + '<br/>';
+            }
+        }
+    }
+
+    filterResult.innerHTML = result;
 });
 
 export {
