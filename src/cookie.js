@@ -77,7 +77,7 @@ function updateTable () {
     for (let key in cookie) {
         if (cookie.hasOwnProperty(key)) {
             if (filterNameInput.value !== '') {
-                if (key.search(reg) !== -1) {
+                if (key.search(reg) !== -1 || cookie[key].search(reg) !== -1) {
                     addToTable(key, cookie[key]);
                 }
             } else {
@@ -95,8 +95,10 @@ addButton.addEventListener('click', () => {
     if (addNameInput.value !== '' && addValueInput.value !== '') {
         cookies.set(addNameInput.value, addValueInput.value, 1);
         updateTable();
-        // addNameInput.value = '';
-        // addValueInput.value = '';
+        setTimeout(function() {
+            addNameInput.value = '';
+            addValueInput.value = '';
+        }, 100);
     }
 });
 
